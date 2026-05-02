@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send, ArrowLeft } from 'lucide-react';
+import { Send, ArrowLeft, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
@@ -13,6 +13,8 @@ export default function NovaDenuncia() {
   const [tipos, setTipos] = useState([]);
   const [orgaoId, setOrgaoId] = useState('');
   const [tipoId, setTipoId] = useState('');
+  const [foto, setFoto] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
@@ -36,6 +38,26 @@ export default function NovaDenuncia() {
     loadSelects();
   }, [loadSelects]);
 
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('A imagem deve ter no máximo 5MB.');
+        return;
+      }
+      setFoto(file);
+      setFotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removeFoto = () => {
+    setFoto(null);
+    if (fotoPreview) {
+      URL.revokeObjectURL(fotoPreview);
+      setFotoPreview(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,7 +70,7 @@ export default function NovaDenuncia() {
 
     setLoading(true);
     try {
-      await api.post('/apis/denuncia', {
+      const response = await api.post('/apis/denuncia', {
         titulo,
         texto,
         urgencia: parseInt(urgencia),
@@ -57,6 +79,15 @@ export default function NovaDenuncia() {
         usuario: { id: user.id },
         data: new Date().toISOString().split('T')[0],
       });
+
+      if (foto && response.data && response.data.id) {
+        const formData = new FormData();
+        formData.append('foto', foto);
+        await api.post(`/apis/denuncia/${response.data.id}/foto`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
       toast.success('Denúncia registrada com sucesso!');
       navigate('/cidadao');
     } catch (error) {
@@ -80,14 +111,14 @@ export default function NovaDenuncia() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <button
-        onClick={() => navigate('/cidadao')}
-        className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Voltar
-      </button>
       <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate('/cidadao')}
+          className="flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar
+        </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Nova Denúncia</h1>
           <p className="text-gray-500 mt-1">Descreva o problema encontrado na sua comunidade</p>
@@ -156,36 +187,57 @@ export default function NovaDenuncia() {
           <label className="block text-sm font-medium text-gray-700 mb-3">Nível de Urgência</label>
           <div className="flex gap-3">
             {[
-              { val: 1, label: 'Baixa', color: 'bg-green-500' },
-              { val: 2, label: 'Média', color: 'bg-yellow-500' },
-              { val: 3, label: 'Alta', color: 'bg-orange-500' },
-              { val: 4, label: 'Urgente', color: 'bg-red-500' },
+              { val: 1, label: 'Baixa', color: '#22c55e' },
+              { val: 2, label: 'Média', color: '#eab308' },
+              { val: 3, label: 'Alta', color: '#f97316' },
+              { val: 4, label: 'Urgente', color: '#ef4444' },
+              { val: 5, label: 'Muito Urgente', color: '#dc2626' },
             ].map((opt) => (
               <button
                 key={opt.val}
                 type="button"
                 onClick={() => setUrgencia(opt.val)}
-                className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium border-2 transition-all ${
-                  parseInt(urgencia) === opt.val
-                    ? `border-${opt.color.split('-')[1]}-500 ${opt.color} text-white`
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                }`}
+                className="flex-1 py-2 px-2 rounded-lg text-xs sm:text-sm font-medium border-2 transition-all"
                 style={
                   parseInt(urgencia) === opt.val
-                    ? {
-                        backgroundColor:
-                          opt.val === 1 ? '#22c55e' : opt.val === 2 ? '#eab308' : opt.val === 3 ? '#f97316' : '#ef4444',
-                        borderColor:
-                          opt.val === 1 ? '#22c55e' : opt.val === 2 ? '#eab308' : opt.val === 3 ? '#f97316' : '#ef4444',
-                        color: '#fff',
-                      }
-                    : {}
+                    ? { backgroundColor: opt.color, borderColor: opt.color, color: '#fff' }
+                    : { borderColor: '#e5e7eb', color: '#6b7280' }
                 }
               >
                 {opt.label}
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Foto (opcional)</label>
+          {!fotoPreview ? (
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <div className="flex flex-col items-center justify-center py-4">
+                <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                <p className="text-sm text-gray-500">Clique para selecionar uma imagem</p>
+                <p className="text-xs text-gray-400 mt-1">PNG, JPG até 5MB</p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFotoChange}
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
+              <img src={fotoPreview} alt="Preview" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={removeFoto}
+                className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3 pt-4">

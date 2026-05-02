@@ -55,7 +55,7 @@ public class FeedBackService {
     }
 
     public FeedBack getByDenunciaId(Long id) {
-        List<FeedBack> feedbacks = feedRepo.findByDenuncia(new Denuncia(id, "", "", 0, null, null, null, null, null));
+        List<FeedBack> feedbacks = feedRepo.findByDenuncia(new Denuncia(id, "", "", 0, null, null, null, null, null, null));
         return feedbacks.isEmpty() ? null : feedbacks.get(0);
     }
 

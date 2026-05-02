@@ -33,15 +33,18 @@ public class Denuncia {
     @JoinColumn(name="usu_id", nullable=false)
     private Usuario usuario;
 
+    @Column(name="den_foto")
+    private String foto;
+
     @OneToOne(mappedBy = "denuncia")
     @JsonManagedReference
     private FeedBack feedBack;
 
     public Denuncia(){
-        this(0L, "", "", 0, null, null, null, null, null);
+        this(0L, "", "", 0, null, null, null, null, null, null);
     }
 
-    public Denuncia(Long id, String titulo, String texto, int urgencia, Orgaos orgao, LocalDate data, Tipo tipo, Usuario usuario, FeedBack feedBack) {
+    public Denuncia(Long id, String titulo, String texto, int urgencia, Orgaos orgao, LocalDate data, Tipo tipo, Usuario usuario, FeedBack feedBack, String foto) {
         this.id = id;
         this.titulo = titulo;
         this.texto = texto;
@@ -51,6 +54,7 @@ public class Denuncia {
         this.tipo = tipo;
         this.usuario = usuario;
         this.feedBack = feedBack;
+        this.foto = foto;
     }
 
     public Long getId() {
@@ -123,5 +127,13 @@ public class Denuncia {
 
     public void setFeedBack(FeedBack feedBack) {
         this.feedBack = feedBack;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }

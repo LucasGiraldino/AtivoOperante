@@ -83,6 +83,7 @@ export default function AdminDashboard() {
       2: { text: 'Média', color: 'bg-yellow-100 text-yellow-700' },
       3: { text: 'Alta', color: 'bg-orange-100 text-orange-700' },
       4: { text: 'Urgente', color: 'bg-red-100 text-red-700' },
+      5: { text: 'Muito Urgente', color: 'bg-red-200 text-red-800' },
     };
     return map[nivel] || { text: 'N/A', color: 'bg-gray-100 text-gray-700' };
   };
@@ -154,6 +155,16 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
+
+                {den.foto && (
+                  <div className="mb-4 rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={`http://localhost:8081${den.foto}`}
+                      alt={den.titulo}
+                      className="w-full h-48 object-cover"
+                    />
+                  </div>
+                )}
 
                 <p className="text-gray-600 text-sm mb-4">{den.texto}</p>
 

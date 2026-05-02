@@ -25,13 +25,14 @@ export default function DashboardCidadao() {
   }, [loadDenuncias]);
 
   const urgenciaLabel = (nivel) => {
-    switch (nivel) {
-      case 1: return { text: 'Baixa', color: 'bg-green-100 text-green-700' };
-      case 2: return { text: 'Media', color: 'bg-yellow-100 text-yellow-700' };
-      case 3: return { text: 'Alta', color: 'bg-orange-100 text-orange-700' };
-      case 4: return { text: 'Urgente', color: 'bg-red-100 text-red-700' };
-      default: return { text: 'N/A', color: 'bg-gray-100 text-gray-700' };
-    }
+    const map = {
+      1: { text: 'Baixa', color: 'bg-green-100 text-green-700' },
+      2: { text: 'Média', color: 'bg-yellow-100 text-yellow-700' },
+      3: { text: 'Alta', color: 'bg-orange-100 text-orange-700' },
+      4: { text: 'Urgente', color: 'bg-red-100 text-red-700' },
+      5: { text: 'Muito Urgente', color: 'bg-red-200 text-red-800' },
+    };
+    return map[nivel] || { text: 'N/A', color: 'bg-gray-100 text-gray-700' };
   };
 
   const formatDate = (dateStr) => {
@@ -90,7 +91,7 @@ export default function DashboardCidadao() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-gray-800">{den.titulo}</h3>
-                    <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-3 mt-2 flex-wrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${urg.color}`}>
                         {urg.text}
                       </span>
@@ -100,13 +101,23 @@ export default function DashboardCidadao() {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                         {den.orgao?.org_nome || '—'}
                       </span>
+                      <span className="inline-flex items-center gap-1 text-gray-400 text-xs">
+                        <Clock className="w-3 h-3" />
+                        {formatDate(den.data)}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 text-gray-400 text-sm">
-                    <Clock className="w-4 h-4" />
-                    {formatDate(den.data)}
-                  </div>
                 </div>
+
+                {den.foto && (
+                  <div className="mb-4 rounded-lg overflow-hidden border border-gray-200">
+                    <img
+                      src={`http://localhost:8081${den.foto}`}
+                      alt={den.titulo}
+                      className="w-full h-48 object-cover"
+                    />
+                  </div>
+                )}
 
                 <p className="text-gray-600 text-sm mb-4">{den.texto}</p>
 

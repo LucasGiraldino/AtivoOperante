@@ -7,11 +7,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import unoeste.fipp.ativooperante_be.dto.Erro;
 import unoeste.fipp.ativooperante_be.entity.Denuncia;
 import unoeste.fipp.ativooperante_be.service.DenunciaService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("apis/denuncia")
@@ -92,7 +98,49 @@ public class DenunciaRestController {
         }
     }
 
-    @GetMapping("usuario/{id}")
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
+
+    @PostMapping("/{id}/foto")
+    @Operation(summary = "Upload de foto", description = "Adiciona uma foto a uma denúncia existente (max 5MB)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Foto enviada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Erro ao enviar foto")
+    })
+    public ResponseEntity<Object> uploadFoto(
+            @PathVariable Long id,
+            @RequestParam("foto") MultipartFile file) {
+        Denuncia denuncia = denunciaService.getDenunciaId(id);
+        if (denuncia == null) {
+            return ResponseEntity.badRequest().body(new Erro("Denúncia não encontrada."));
+        }
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(new Erro("Arquivo vazio."));
+        }
+
+        try {
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String extensao = "";
+            String original = file.getOriginalFilename();
+            if (original != null && original.contains(".")) {
+                extensao = original.substring(original.lastIndexOf("."));
+            }
+            String nomeArquivo = UUID.randomUUID().toString() + extensao;
+            Path destino = uploadPath.resolve(nomeArquivo);
+            Files.write(destino, file.getBytes());
+
+            denuncia.setFoto("/uploads/" + nomeArquivo);
+            denunciaService.salvarDenuncia(denuncia);
+            return ResponseEntity.ok(denuncia.getFoto());
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(new Erro("Erro ao salvar arquivo: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/usuario/{id}")
     @Operation(summary = "Denúncias por usuário", description = "Lista todas as denúncias de um usuário específico")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista de denúncias do usuário"),
