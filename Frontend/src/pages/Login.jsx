@@ -16,16 +16,16 @@ export default function Login() {
 
     try {
       const response = await api.post('/auth/login', { email, senha: parseInt(password) });
-      const { token, nivel } = response.data;
+      const { token, nivel, usuarioId } = response.data;
 
       localStorage.setItem('token', token);
 
       if (nivel === 1) {
-        localStorage.setItem('user', JSON.stringify({ role: 'admin', email }));
+        localStorage.setItem('user', JSON.stringify({ role: 'admin', email, id: usuarioId }));
         toast.success('Bem-vindo, Administrador!');
         navigate('/admin');
       } else {
-        localStorage.setItem('user', JSON.stringify({ role: 'cidadao', email }));
+        localStorage.setItem('user', JSON.stringify({ role: 'cidadao', email, id: usuarioId }));
         toast.success('Login efetuado com sucesso!');
         navigate('/cidadao');
       }

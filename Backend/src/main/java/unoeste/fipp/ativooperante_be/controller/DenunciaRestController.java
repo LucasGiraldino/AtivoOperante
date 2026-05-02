@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import unoeste.fipp.ativooperante_be.dto.Erro;
 import unoeste.fipp.ativooperante_be.entity.Denuncia;
-import unoeste.fipp.ativooperante_be.entity.FeedBack;
 import unoeste.fipp.ativooperante_be.service.DenunciaService;
 
 import java.util.List;
@@ -61,14 +60,6 @@ public class DenunciaRestController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new Erro("Erro ao alterar Denuncia"));
         }
-    }
-
-    @GetMapping("add-feedback/{id}/{texto}")
-    public ResponseEntity<Object> addFeedBack(@PathVariable Long id, @PathVariable String texto) {
-        if (denunciaService.addFeedBack(new FeedBack(id, texto)))
-            return ResponseEntity.noContent().build();
-        else
-            return ResponseEntity.badRequest().body("Não foi possível adicionar o feedback");
     }
 
     @GetMapping("usuario/{id}")

@@ -58,4 +58,8 @@ public class FeedBackService {
         List<FeedBack> feedbacks = feedRepo.findByDenuncia(new Denuncia(id, "", "", 0, null, null, null, null, null));
         return feedbacks.isEmpty() ? null : feedbacks.get(0);
     }
+
+    public List<FeedBack> getByUsuarioId(Long usuarioId) {
+        return feedRepo.findByUsuarioId(usuarioId);
+    }
 }

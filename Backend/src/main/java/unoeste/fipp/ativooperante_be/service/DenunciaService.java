@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import unoeste.fipp.ativooperante_be.entity.Denuncia;
-import unoeste.fipp.ativooperante_be.entity.FeedBack;
 import unoeste.fipp.ativooperante_be.entity.Usuario;
 import unoeste.fipp.ativooperante_be.repository.DenunciaRepository;
+import unoeste.fipp.ativooperante_be.repository.UsuarioRepository;
 
 import java.util.List;
 
@@ -15,6 +15,9 @@ public class DenunciaService {
 
     @Autowired
     private DenunciaRepository denunciaRepository;
+
+    @Autowired
+    private UsuarioRepository usuRepo;
 
     @Transactional
     public void deleteByUsuario(Usuario usuario) {
@@ -33,17 +36,12 @@ public class DenunciaService {
         return denunciaRepository.save(denuncia);
     }
 
-    public boolean addFeedBack(FeedBack feedBack) {
-        try {
-            denunciaRepository.addFeedBack(feedBack.getFee_id(), feedBack.getFee_texto());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public List<Denuncia> getAllByUsuario(Long id) {
-        return denunciaRepository.findAllByUsuario(new Usuario(id, 0L));
+        Usuario usuario = usuRepo.findById(id).orElse(null);
+        if (usuario != null) {
+            return denunciaRepository.findAllByUsuario(usuario);
+        }
+        return List.of();
     }
 
     public boolean deleteDenuncia(Denuncia denuncia) {

@@ -28,7 +28,7 @@ public class AuthController {
         Usuario usuario = usuarioService.autenticar(request.getEmail(), request.getSenha());
         if (usuario != null) {
             String token = usuarioService.gerarToken(usuario);
-            return ResponseEntity.ok(new LoginResponse(token, usuario.getEmail(), usuario.getNivel()));
+            return ResponseEntity.ok(new LoginResponse(token, usuario.getEmail(), usuario.getNivel(), usuario.getId()));
         }
         return ResponseEntity.badRequest().body(new Erro("Email ou senha inválidos"));
     }

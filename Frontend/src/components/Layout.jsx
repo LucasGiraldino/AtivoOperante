@@ -4,7 +4,8 @@ import { LogOut, Home, AlertCircle, Settings, FileText } from 'lucide-react';
 export default function Layout({ role }) {
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -66,6 +67,7 @@ export default function Layout({ role }) {
             {role === 'admin' ? 'Área Administrativa' : 'Área do Cidadão'}
           </h2>
           <div className="flex items-center gap-3">
+             <span className="text-sm text-gray-600">{user.email}</span>
              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
                {role === 'admin' ? 'A' : 'C'}
              </div>
