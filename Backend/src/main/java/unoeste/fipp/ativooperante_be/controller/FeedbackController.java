@@ -1,5 +1,9 @@
 package unoeste.fipp.ativooperante_be.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("apis/feedback")
+@Tag(name = "Feedback", description = "CRUD de feedbacks em denúncias")
 public class FeedbackController {
 
     @Autowired
@@ -22,6 +27,10 @@ public class FeedbackController {
     private DenunciaService denunciaService;
 
     @GetMapping("/usuario/{id}")
+    @Operation(summary = "Feedbacks por usuário", description = "Lista todos os feedbacks das denúncias de um usuário")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Lista de feedbacks ou array vazio")
+    })
     public ResponseEntity<Object> getByUsuario(@PathVariable Long id) {
         List<FeedBack> lista = feedBackService.getByUsuarioId(id);
         if (!lista.isEmpty()) {
@@ -31,6 +40,11 @@ public class FeedbackController {
     }
 
     @PostMapping
+    @Operation(summary = "Criar feedback", description = "Registra um novo feedback em uma denúncia")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Feedback criado"),
+        @ApiResponse(responseCode = "400", description = "Erro na validação ou denúncia não encontrada")
+    })
     public ResponseEntity<Object> addFeedback(@RequestBody FeedBack feedback) {
         if (feedback.getFee_texto() == null || feedback.getFee_texto().isBlank()) {
             return ResponseEntity.badRequest().body(new Erro("Texto do feedback é obrigatório."));
@@ -53,6 +67,11 @@ public class FeedbackController {
     }
 
     @PutMapping
+    @Operation(summary = "Atualizar feedback", description = "Atualiza o texto de um feedback existente")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Feedback atualizado"),
+        @ApiResponse(responseCode = "400", description = "Feedback não encontrado ou erro ao atualizar")
+    })
     public ResponseEntity<Object> updateFeedback(@RequestBody FeedBack feedback) {
         if (feedback.getFee_id() == null) {
             return ResponseEntity.badRequest().body(new Erro("ID do feedback é obrigatório."));
