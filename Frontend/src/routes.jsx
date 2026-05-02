@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import Cadastro from './pages/Cadastro';
 
 // Placeholder components for now
 const CitizenDashboard = () => <div>Dashboard Cidadão</div>;
@@ -13,7 +14,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/cadastro" element={<div>Cadastro</div>} />
+      <Route path="/cadastro" element={<Cadastro />} />
       
       <Route path="/cidadao" element={<Layout role="cidadao" />}>
         <Route index element={<CitizenDashboard />} />

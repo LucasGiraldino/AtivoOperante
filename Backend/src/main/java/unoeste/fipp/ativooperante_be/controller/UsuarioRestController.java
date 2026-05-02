@@ -38,17 +38,27 @@ public class UsuarioRestController {
 
     @PostMapping("/cadastrar")
     public ResponseEntity<Object> save(@RequestBody Usuario novo) {
-        if (novo.getEmail() != null && usuarioService.existePorEmail(novo.getEmail())) {
+        if (novo.getEmail() == null || novo.getEmail().isBlank()) {
+            return ResponseEntity.badRequest().body(new Erro("Email é obrigatório."));
+        }
+        if (novo.getCpf() == null) {
+            return ResponseEntity.badRequest().body(new Erro("CPF é obrigatório."));
+        }
+        if (novo.getSenha() == null) {
+            return ResponseEntity.badRequest().body(new Erro("Senha é obrigatória."));
+        }
+        if (novo.getCpf().toString().length() != 11) {
+            return ResponseEntity.badRequest().body(new Erro("CPF deve ter 11 dígitos."));
+        }
+        if (usuarioService.existePorEmail(novo.getEmail())) {
             return ResponseEntity.badRequest().body(new Erro("Este E-mail já está em uso."));
         }
-        if (novo.getCpf() != null && usuarioService.existePorCpf(novo.getCpf())) {
+        if (usuarioService.existePorCpf(novo.getCpf())) {
             return ResponseEntity.badRequest().body(new Erro("Este CPF já está cadastrado."));
         }
 
         try {
-            if (novo.getNivel() == null) {
-                novo.setNivel(1L);
-            }
+            novo.setNivel(2L);
             Usuario novoUsuario = usuarioService.salvarUsuario(novo);
             return ResponseEntity.ok(novoUsuario);
         } catch (Exception e) {
