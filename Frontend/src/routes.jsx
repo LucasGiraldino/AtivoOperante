@@ -4,11 +4,10 @@ import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 import DashboardCidadao from './pages/DashboardCidadao';
 import NovaDenuncia from './pages/NovaDenuncia';
+import AdminDashboard from './pages/AdminDashboard';
+import GerenciarOrgaos from './pages/GerenciarOrgaos';
+import GerenciarTipos from './pages/GerenciarTipos';
 import AuthGuard from './components/AuthGuard';
-
-const AdminDashboard = () => <div>Dashboard Admin</div>;
-const Organs = () => <div>Órgãos Competentes</div>;
-const ProblemTypes = () => <div>Tipos de Problema</div>;
 
 export default function AppRoutes() {
   return (
@@ -23,8 +22,8 @@ export default function AppRoutes() {
 
       <Route path="/admin" element={<AuthGuard requiredRole="admin"><Layout role="admin" /></AuthGuard>}>
         <Route index element={<AdminDashboard />} />
-        <Route path="orgaos" element={<Organs />} />
-        <Route path="tipos-problema" element={<ProblemTypes />} />
+        <Route path="orgaos" element={<GerenciarOrgaos />} />
+        <Route path="tipos-problema" element={<GerenciarTipos />} />
       </Route>
     </Routes>
   );

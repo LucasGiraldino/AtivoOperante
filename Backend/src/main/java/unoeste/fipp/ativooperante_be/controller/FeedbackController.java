@@ -51,4 +51,20 @@ public class FeedbackController {
             return ResponseEntity.badRequest().body(new Erro("Erro ao adicionar feedback."));
         }
     }
+
+    @PutMapping
+    public ResponseEntity<Object> updateFeedback(@RequestBody FeedBack feedback) {
+        if (feedback.getFee_id() == null) {
+            return ResponseEntity.badRequest().body(new Erro("ID do feedback é obrigatório."));
+        }
+        try {
+            FeedBack atualizado = feedBackService.atualizarFeedBack(feedback);
+            if (atualizado != null) {
+                return ResponseEntity.ok(atualizado);
+            }
+            return ResponseEntity.badRequest().body(new Erro("Feedback não encontrado."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Erro("Erro ao atualizar feedback."));
+        }
+    }
 }
