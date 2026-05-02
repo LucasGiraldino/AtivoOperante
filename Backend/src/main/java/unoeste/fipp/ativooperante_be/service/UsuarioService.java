@@ -29,8 +29,10 @@ public class UsuarioService {
 
     public Usuario autenticar(String email, Long senha) {
         Usuario usuario = usuRepo.findByEmail(email);
-        if (usuario != null && usuario.getSenha().equals(senha)) {
-            return usuario;
+        if (usuario != null && usuario.getSenha() != null) {
+            if (usuario.getSenha().longValue() == senha.longValue()) {
+                return usuario;
+            }
         }
         return null;
     }

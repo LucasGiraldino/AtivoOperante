@@ -1,6 +1,7 @@
 package unoeste.fipp.ativooperante_be.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 
@@ -33,6 +34,7 @@ public class Denuncia {
     private Usuario usuario;
 
     @OneToOne(mappedBy = "denuncia")
+    @JsonManagedReference
     private FeedBack feedBack;
 
     public Denuncia(){

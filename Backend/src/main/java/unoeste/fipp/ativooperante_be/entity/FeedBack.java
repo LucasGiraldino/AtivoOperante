@@ -1,6 +1,7 @@
 package unoeste.fipp.ativooperante_be.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name="feedback")
@@ -16,6 +17,7 @@ public class FeedBack {
 
     @OneToOne
     @JoinColumn(name="den_id", nullable = false, unique = true)
+    @JsonBackReference
     private Denuncia denuncia;
 
     public FeedBack(Long id, String texto){
