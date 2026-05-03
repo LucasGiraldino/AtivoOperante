@@ -8,7 +8,7 @@ Seja um cidadão atento aos problemas do dia a dia. Avise e denuncie de forma ef
 cd Backend
 mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
 ```
-
+## Front-End
 ```bash
 cd Frontend
 npm run dev
