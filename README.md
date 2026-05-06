@@ -7,6 +7,7 @@ Seja um cidadão atento aos problemas do dia a dia. Avise e denuncie de forma ef
 ```bash
 cd Backend
 mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
+ou mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
 ```
 ## Front-End
 ```bash
