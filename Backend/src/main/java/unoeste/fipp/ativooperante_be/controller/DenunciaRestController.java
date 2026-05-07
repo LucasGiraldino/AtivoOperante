@@ -3,6 +3,7 @@ package unoeste.fipp.ativooperante_be.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("apis/denuncia")
 @Tag(name = "Denúncia", description = "CRUD de denúncias e consulta por usuário")
+@SecurityRequirement(name = "bearerAuth")
 public class DenunciaRestController {
 
     @Autowired

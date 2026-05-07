@@ -17,7 +17,7 @@ public class JWTTokenProvider {
     public static String getToken(String usuario, String nivel) {
         return Jwts.builder()
                 .setSubject(usuario)
-                .setIssuer("localhost:8080")
+                .setIssuer("localhost:8081")
                 .claim("nivel", nivel)
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(LocalDateTime.now().plusHours(24L)
